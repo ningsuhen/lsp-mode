@@ -59,6 +59,18 @@
                    :type 'plain))
       (set-process-filter tcp-proc filter)
       (cons proc tcp-proc))))
+(defun lsp--make-tcp-connection (name command host port)                                          
+   (lambda (filter sentinel)                                                                   
+    (let ((final-command (if (consp command) command (list command)))                         
+         ¦  proc)                                                                              
+       (unless (executable-find (nth 0 final-command))                                         
+         (error (format "Couldn't find executable %s" (nth 0 final-command))))                 
+       (setq proc (open-network-stream (concat name " TCP connection")                         
+                      nil host port                                                              
+                      :type 'plain))                                                             
+      (set-process-filter proc filter)                                                        
+       (cons proc proc))))
+
 
 (defun lsp--verify-regexp-list (l)
   (cl-assert (cl-typep l 'list) nil
